@@ -36,26 +36,33 @@ body {
   padding: 3rem 1.5rem;
 }
 
-header {
+header.app-header {
   text-align: center;
-  margin-bottom: 3.5rem;
+  margin-bottom: 2rem;
   animation: fadeInDown 0.8s cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
-h1 {
-  font-size: 3rem;
+header.app-header h1 {
+  font-size: 2.25rem;
   font-weight: 700;
   margin-bottom: 0.5rem;
-  letter-spacing: -0.02em;
-  background: linear-gradient(135deg, #c7d2fe, #818cf8);
+  background: linear-gradient(135deg, var(--accent-color), #48bfe3);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
-header p {
+header.app-header h2 {
   color: var(--text-secondary);
-  font-size: 1.15rem;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  margin: 0 auto;
+  max-width: 600px;
 }
+
+/* The original global h1 rule is now specific to header.app-header h1 */
+/* The original header p rule is now specific to header.app-header h2 */
 
 .glass {
   background: var(--glass-bg);
