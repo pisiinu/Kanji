@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創作命名アシスタント</title>
+    <meta name="description" content="A tool for fictional and actual naming support using kanji.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>創作命名アシスタント</h1>
+            <p>創作と名付けのための漢字探索ツール</p>
+        </header>
+        
+        <main>
+            <section class="controls glass">
+                <div class="mode-selector">
+                    <label class="radio-label">
+                        <input type="radio" name="mode" value="fiction" checked>
+                        <span class="custom-radio"></span>
+                        フィクション用 (使えない漢字のみ)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="mode" value="all">
+                        <span class="custom-radio"></span>
+                        全漢字 (すべて)
+                    </label>
+                    <label class="radio-label">
+                        <input type="radio" name="mode" value="real">
+                        <span class="custom-radio"></span>
+                        実名用 (使える漢字のみ)
+                    </label>
+                </div>
+                
+                <div class="filters">
+                    <div class="input-group">
+                        <input type="text" id="reading-filter" placeholder="読み方で検索 (例: ま, マ)">
+                        <select id="match-type-select">
+                            <option value="prefix" selected>前方一致 (あ → あい)</option>
+                            <option value="exact">完全一致 (あ → あのみ)</option>
+                            <option value="partial">部分一致 (あ → しあ)</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select id="radical-select">
+                            <option value="">部首で検索: 指定なし</option>
+                        </select>
+                    </div>
+                    <div class="input-group">
+                        <select id="sort-select">
+                            <option value="default">並び替え: デフォルト</option>
+                            <option value="strokes">並び替え: 画数順</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="results-section">
+                <div id="results-count" class="results-count"></div>
+                <div id="kanji-grid" class="kanji-grid">
+                    <!-- Cards will be dynamically inserted here -->
+                </div>
+            </section>
+        </main>
+    </div>
+    
+    <script src="kanji_data.js"></script>
+    <script src="ads.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
