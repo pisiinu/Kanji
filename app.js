@@ -138,13 +138,14 @@ document.addEventListener('DOMContentLoaded', () => {
         
         // Approx kanji item width is 95px + 12px gap = 107px
         let itemsPerRow = Math.max(1, Math.floor((kanjiGrid.clientWidth + 12) / 107));
-        // Change ad frequency from every 5 rows to every 10 rows to be less intrusive
+        // Change ad frequency: First after 3 rows, then every 10 rows
         const itemsToAd = itemsPerRow * 10;
+        const offsetToFirstAd = itemsPerRow * 3;
 
         batch.forEach((item, index) => {
             const globalIndex = currentRenderCount + index;
-            // Inject Sponsor Card every 10 rows
-            if (storedAds.length > 0 && globalIndex > 0 && globalIndex % itemsToAd === 0) {
+            // Inject Sponsor Card
+            if (storedAds.length > 0 && globalIndex >= offsetToFirstAd && (globalIndex - offsetToFirstAd) % itemsToAd === 0) {
                 const infoCard = document.createElement('div');
                 infoCard.className = 'info-panel';
                 const randomAd = storedAds[Math.floor(Math.random() * storedAds.length)];

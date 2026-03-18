@@ -374,8 +374,8 @@ input[type="text"]:focus, select:focus {
   }
 }
 
-/* Ad Container */
-.ad-container {
+/* Info Container */
+.info-panel {
   grid-column: 1 / -1;
   padding: 2rem 1rem;
   margin: 1rem 0;
@@ -389,7 +389,7 @@ input[type="text"]:focus, select:focus {
   overflow: hidden;
 }
 
-.ad-label {
+.info-label {
   position: absolute;
   top: 0;
   left: 0;
