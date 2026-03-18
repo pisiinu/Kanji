@@ -23,8 +23,8 @@ document.addEventListener('DOMContentLoaded', () => {
     loadMoreBtn.textContent = 'さらに表示';
     loadMoreBtn.style.display = 'none';
 
-    // Link external static ads
-    let storedAds = typeof amazonAds !== 'undefined' ? amazonAds : [];
+    // Link external static sponsor logic (evade adblockers)
+    let storedAds = typeof sponsorLinks !== 'undefined' ? sponsorLinks : [];
     
     // Observer to automatically load more
     const observer = new IntersectionObserver((entries) => {
@@ -143,13 +143,13 @@ document.addEventListener('DOMContentLoaded', () => {
 
         batch.forEach((item, index) => {
             const globalIndex = currentRenderCount + index;
-            // Inject Ad Card every 5 rows
+            // Inject Sponsor Card every 10 rows
             if (storedAds.length > 0 && globalIndex > 0 && globalIndex % itemsToAd === 0) {
-                const adCard = document.createElement('div');
-                adCard.className = 'ad-container';
+                const infoCard = document.createElement('div');
+                infoCard.className = 'info-panel';
                 const randomAd = storedAds[Math.floor(Math.random() * storedAds.length)];
-                adCard.innerHTML = `<div class="ad-label">Sponsor</div>${randomAd}`;
-                fragment.appendChild(adCard);
+                infoCard.innerHTML = `<div class="info-label">Sponsor</div>${randomAd}`;
+                fragment.appendChild(infoCard);
             }
 
             const card = document.createElement('a');
@@ -181,13 +181,13 @@ document.addEventListener('DOMContentLoaded', () => {
         kanjiGrid.appendChild(fragment);
         currentRenderCount += batch.length;
         
-        // Append an ad at the very end if we didn't inject one during the loop because total items was less than 5 rows
+        // Append a sponsor card at the very end if we didn't inject one during the loop because total items was less than 10 rows
         if (storedAds.length > 0 && currentFiltered.length < itemsToAd && currentRenderCount === currentFiltered.length && currentFiltered.length > 0) {
-            const adCard = document.createElement('div');
-            adCard.className = 'ad-container';
+            const infoCard = document.createElement('div');
+            infoCard.className = 'info-panel';
             const randomAd = storedAds[Math.floor(Math.random() * storedAds.length)];
-            adCard.innerHTML = `<div class="ad-label">Sponsor</div>${randomAd}`;
-            kanjiGrid.appendChild(adCard);
+            infoCard.innerHTML = `<div class="info-label">Sponsor</div>${randomAd}`;
+            kanjiGrid.appendChild(infoCard);
         }
         
         if (currentRenderCount < currentFiltered.length) {
