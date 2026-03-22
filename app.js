@@ -156,7 +156,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const card = document.createElement('a');
             const statusClass = item.isNameAllowed ? `allowed allowed-${item.kanjiType}` : 'not-allowed';
             const badgeClass = item.isNameAllowed ? (item.kanjiType === 'joyo' ? 'badge-joyo' : 'badge-jinmeiyo') : 'badge-ng';
-            const badgeText = item.isNameAllowed ? (item.kanjiType === 'joyo' ? '常用漢字' : '人名用漢字') : '人名不可';
+            const badgeText = item.isNameAllowed ? (item.kanjiType === 'joyo' ? '常用漢字' : '人名漢字') : '人名不可';
             const strokesText = item.strokes ? `${item.strokes}画` : '';
             
             card.className = `kanji-card ${statusClass}`;
