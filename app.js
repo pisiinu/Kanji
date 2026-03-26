@@ -155,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
             sortNote.textContent = '※ 日本漢字能力検定の級に準拠';
             sortNote.style.display = 'block';
         } else if (currentSort.startsWith('jinmeiyo')) {
-            sortNote.textContent = '※ 法務省の制定する子の名に使える漢字一覧に追加された年に準拠';
+            sortNote.textContent = '※ 京都大学 安岡孝一教授の『人名用漢字表の変遷』データに準拠';
             sortNote.style.display = 'block';
         } else {
             sortNote.style.display = 'none';
