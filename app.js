@@ -6,6 +6,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const matchTypeSelect = document.getElementById('match-type-select');
     const radicalSelect = document.getElementById('radical-select');
     const sortSelect = document.getElementById('sort-select');
+    const sortNote = document.getElementById('sort-note');
 
     let currentMode = 'fiction'; // 'fiction', 'all', 'real'
     let currentReading = '';
@@ -100,7 +101,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 radicalMatch = item.radicals.some(r => r.includes(searchRadical));
             }
 
-            return modeMatch && readingMatch && radicalMatch;
+            // If sorting by Jinmeiyo year, ONLY display Jinmeiyo kanji
+            let jinmeiyoMatch = true;
+            if (currentSort.startsWith('jinmeiyo')) {
+                jinmeiyoMatch = item.kanjiType === 'jinmeiyo';
+            }
+
+            return modeMatch && readingMatch && radicalMatch && jinmeiyoMatch;
         });
 
         // Update dropdown options to show counts
@@ -115,13 +122,44 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Apply Sorting
         if (currentSort === 'strokes') {
-            filtered.sort((a, b) => (a.strokes || 0) - (b.strokes || 0));
+            filtered.sort((a, b) => (a.strokes || 99) - (b.strokes || 99));
+        } else if (currentSort === 'strokes_desc') {
+            filtered.sort((a, b) => (b.strokes || 0) - (a.strokes || 0));
+        } else if (currentSort === 'freq') {
+            filtered.sort((a, b) => (a.freq || 9999) - (b.freq || 9999));
+        } else if (currentSort === 'freq_desc') {
+            filtered.sort((a, b) => (b.freq || -1) - (a.freq || -1));
+        } else if (currentSort === 'kanken' || currentSort === 'kanken_desc') {
+            const kankenOrder = {"10":1, "9":2, "8":3, "7":4, "6":5, "5":6, "2～4":7, "2〜4":7, "準1":8, "1":9};
+            filtered.sort((a, b) => {
+                const valA = kankenOrder[a.kankenGrade] || 99;
+                const valB = kankenOrder[b.kankenGrade] || 99;
+                return currentSort === 'kanken' ? valA - valB : valB - valA;
+            });
+        } else if (currentSort === 'jinmeiyo') {
+            filtered.sort((a, b) => (a.jinmeiyoYear || 9999) - (b.jinmeiyoYear || 9999));
+        } else if (currentSort === 'jinmeiyo_desc') {
+            filtered.sort((a, b) => (b.jinmeiyoYear || 0) - (a.jinmeiyoYear || 0));
         }
 
         currentFiltered = filtered;
         currentRenderCount = 0;
         
         resultsCount.textContent = `${filtered.length} 件の漢字が見つかりました`;
+
+        // Update sort note
+        if (currentSort.startsWith('freq')) {
+            sortNote.textContent = '※ KANJIDIC2準拠朝日新聞の数年分の記事を解析して集計された統計データに基づく';
+            sortNote.style.display = 'block';
+        } else if (currentSort.startsWith('kanken')) {
+            sortNote.textContent = '※ 日本漢字能力検定の級に準拠';
+            sortNote.style.display = 'block';
+        } else if (currentSort.startsWith('jinmeiyo')) {
+            sortNote.textContent = '※ 法務省の制定する子の名に使える漢字一覧に追加された年に準拠';
+            sortNote.style.display = 'block';
+        } else {
+            sortNote.style.display = 'none';
+        }
 
         renderNextBatch(true);
     }
@@ -165,7 +203,16 @@ document.addEventListener('DOMContentLoaded', () => {
             card.rel = 'noopener noreferrer';
             card.title = `${item.kanji}の意味を見る - 読み: ${item.readings.join(', ')} / 部首: ${item.radicals.join(', ')}`;
             
-            // the readings and radicals are visible on hover or title.
+            // Extra display for sorting context validation
+            let extraInfo = '';
+            if (currentSort.startsWith('freq') && item.freq && item.freq !== 9999) {
+                extraInfo = `頻度順位: ${item.freq}位`;
+            } else if (currentSort.startsWith('kanken') && item.kankenGrade) {
+                extraInfo = `漢検: ${item.kankenGrade}級`;
+            } else if (currentSort.startsWith('jinmeiyo') && item.jinmeiyoYear) {
+                extraInfo = `人名解禁: ${item.jinmeiyoYear}年`;
+            }
+
             card.innerHTML = `
                 <div class="card-header">
                     <span class="badge ${badgeClass}">${badgeText}</span>
@@ -174,6 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="kanji-character">${escapeHtml(item.kanji)}</div>
                 <div class="kanji-info">
                     <div class="kanji-info-text">${escapeHtml(item.readings.join(', '))}</div>
+                    ${extraInfo ? `<div class="kanji-meta-info">${escapeHtml(extraInfo)}</div>` : ''}
                 </div>
             `;
             fragment.appendChild(card);
