@@ -361,7 +361,8 @@ input[type="text"]:focus, select:focus {
   background: rgba(129, 140, 248, 0.15);
   padding: 0.15rem 0.25rem;
   border-radius: 4px;
-  white-space: nowrap;
+  white-space: normal;
+  word-break: break-word;
   border: 1px solid rgba(129, 140, 248, 0.2);
 }
 

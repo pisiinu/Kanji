@@ -107,7 +107,13 @@ document.addEventListener('DOMContentLoaded', () => {
                 jinmeiyoMatch = item.kanjiType === 'jinmeiyo';
             }
 
-            return modeMatch && readingMatch && radicalMatch && jinmeiyoMatch;
+            // If sorting by freq, only show freq <= 2501
+            let freqMatch = true;
+            if (currentSort.startsWith('freq')) {
+                freqMatch = item.freq && item.freq <= 2501;
+            }
+
+            return modeMatch && readingMatch && radicalMatch && jinmeiyoMatch && freqMatch;
         });
 
         // Update dropdown options to show counts
@@ -129,13 +135,6 @@ document.addEventListener('DOMContentLoaded', () => {
             filtered.sort((a, b) => (a.freq || 9999) - (b.freq || 9999));
         } else if (currentSort === 'freq_desc') {
             filtered.sort((a, b) => (b.freq || -1) - (a.freq || -1));
-        } else if (currentSort === 'kanken' || currentSort === 'kanken_desc') {
-            const kankenOrder = {"10":1, "9":2, "8":3, "7":4, "6":5, "5":6, "2～4":7, "2〜4":7, "準1":8, "1":9};
-            filtered.sort((a, b) => {
-                const valA = kankenOrder[a.kankenGrade] || 99;
-                const valB = kankenOrder[b.kankenGrade] || 99;
-                return currentSort === 'kanken' ? valA - valB : valB - valA;
-            });
         } else if (currentSort === 'jinmeiyo') {
             filtered.sort((a, b) => (a.jinmeiyoYear || 9999) - (b.jinmeiyoYear || 9999));
         } else if (currentSort === 'jinmeiyo_desc') {
@@ -149,13 +148,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
         // Update sort note
         if (currentSort.startsWith('freq')) {
-            sortNote.textContent = '※ KANJIDIC2準拠朝日新聞の数年分の記事を解析して集計された統計データに基づく';
-            sortNote.style.display = 'block';
-        } else if (currentSort.startsWith('kanken')) {
-            sortNote.textContent = '※ 日本漢字能力検定の級に準拠';
+            sortNote.textContent = '※ KANJIDIC2準拠朝日新聞の数年分の記事を解析して集計された統計データに基づく（2501位まで表示）';
             sortNote.style.display = 'block';
         } else if (currentSort.startsWith('jinmeiyo')) {
-            sortNote.textContent = '※ 京都大学 安岡孝一教授の『人名用漢字表の変遷』データに準拠';
+            sortNote.textContent = '※ Wikipedia「人名用漢字一覧」に準拠';
             sortNote.style.display = 'block';
         } else {
             sortNote.style.display = 'none';
@@ -204,13 +200,11 @@ document.addEventListener('DOMContentLoaded', () => {
             card.title = `${item.kanji}の意味を見る - 読み: ${item.readings.join(', ')} / 部首: ${item.radicals.join(', ')}`;
             
             // Extra display for sorting context validation
-            let extraInfo = '';
+            let extraInfoHtml = '';
             if (currentSort.startsWith('freq') && item.freq && item.freq !== 9999) {
-                extraInfo = `頻度順位: ${item.freq}位`;
-            } else if (currentSort.startsWith('kanken') && item.kankenGrade) {
-                extraInfo = `漢検: ${item.kankenGrade}級`;
+                extraInfoHtml = `<div class="kanji-meta-info">順位: ${item.freq}位</div>`;
             } else if (currentSort.startsWith('jinmeiyo') && item.jinmeiyoYear) {
-                extraInfo = `人名解禁: ${item.jinmeiyoYear}年`;
+                extraInfoHtml = `<div class="kanji-meta-info">登録: ${item.jinmeiyoYear}年</div>`;
             }
 
             card.innerHTML = `
@@ -221,7 +215,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 <div class="kanji-character">${escapeHtml(item.kanji)}</div>
                 <div class="kanji-info">
                     <div class="kanji-info-text">${escapeHtml(item.readings.join(', '))}</div>
-                    ${extraInfo ? `<div class="kanji-meta-info">${escapeHtml(extraInfo)}</div>` : ''}
+                    ${extraInfoHtml}
                 </div>
             `;
             fragment.appendChild(card);
